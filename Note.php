@@ -61,7 +61,7 @@ class Note {
     private function get_new_id(){
         $score = $this -> redis -> zCard($this::note_ids_key);
         do {
-            $id = $this -> random_str(8);
+            $id = $this -> random_str(5);
             $result = $this -> redis -> zAdd($this::note_ids_key, $score, $id);
         }while(!$result);
 
@@ -69,10 +69,11 @@ class Note {
     }
     private function random_str( $length) {
         $chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
-        $password = '';
-        for ( $i = 0; $i < $length; $i++ )
+        $password = $chars[mt_rand(0, 25)];
+
+        for ( $i = 0; $i < $length - 1; $i++ )
         {
-            $password .= $chars[ mt_rand(0, strlen($chars) - 1) ];
+            $password .= $chars[mt_rand(0, 35)];
         }
         return $password;
     }
