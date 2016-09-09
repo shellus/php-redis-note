@@ -31,9 +31,14 @@ class Note {
     {
         $this -> redis = $redis;
     }
+
+    /**
+     * @param string $title
+     * @return int
+     */
     public function add($title = ""){
         $id = $this -> get_new_id();
-        $this -> redis -> hSet($this::note_titles_key, $id ,$title);
+        return $this -> redis -> hSet($this::note_titles_key, $id ,$title);
     }
     public function index($strat = 0, $offset = -1){
         $ids = $this -> redis -> zRange($this::note_ids_key, $strat, $offset);
