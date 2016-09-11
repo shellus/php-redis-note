@@ -22,9 +22,9 @@ class Note {
     /**
      * redis的key定义
      */
-    const note_ids_key = "note:ids";
-    const note_titles_key = "note:titles";
-    const note_payloads_key = "note:payloads";
+    const note_ids_key = "ids";
+    const note_titles_key = "titles";
+    const note_payloads_key = "payloads";
     
      
     public function __construct($redis)
@@ -38,18 +38,23 @@ class Note {
      */
     public function add($title = ""){
         $id = $this -> get_new_id();
-        return $this -> redis -> hSet($this::note_titles_key, $id ,$title);
+        $this -> redis -> hSet($this::note_titles_key, $id ,$title);
+        return $id;
     }
     public function index($strat = 0, $offset = -1){
         $ids = $this -> redis -> zRange($this::note_ids_key, $strat, $offset);
         $notes = [];
         foreach ($ids as $id){
-            $notes[]['id'] = $id;
-            $notes[]['title'] = $this -> redis -> hGet($this::note_titles_key, $id);
+            $note = [];
+            $note['id'] = $id;
+
+            $note['title'] = $this -> redis -> hGet($this::note_titles_key, $id);
 
             // 可以不在列表加载payload来提升获取速度
-            $notes[]['payload'] = $this -> redis -> hGet($this::note_payloads_key, $id);
+            $note['payload'] = $this -> redis -> hGet($this::note_payloads_key, $id);
+            $notes[] = $note;
         }
+
         return $notes;
     }
     public function delete($id){
@@ -65,7 +70,7 @@ class Note {
             $result = $this -> redis -> zAdd($this::note_ids_key, $score, $id);
         }while(!$result);
 
-        return $result;
+        return $id;
     }
     private function random_str( $length) {
         $chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
