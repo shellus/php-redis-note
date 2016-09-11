@@ -6,8 +6,9 @@
  * Time: 18:54
  */
 /** @var Router $router */
+
+
 $router -> get('/', function(){
-    $response = BinaryFileResponse::create(APP_PATH . "/app/view/note.html");
-    return $response;
+    return view('note');
 });
 $router -> resource('note', App\Controller\NoteController::class);

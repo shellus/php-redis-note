@@ -66,6 +66,7 @@
             border-radius: 0;
         }
         .panel-heading {
+            padding: 0;
             border-radius: 0;
         }
         .panel-body {
@@ -99,29 +100,33 @@
 </nav>
 <div class="container-fluid">
     <div class="row">
-        <div class="col-md-2">
+        <div class="col-md-3">
             <div class="row">
                 <div class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix-top">
                     <div class="panel  panel-info">
                         <div class="panel-heading">
-                            <form class="form-inline" role="form" action="/note" method="post">
+                            <form id="note-add-form" class="form-inline" role="form" action="/note" method="post">
                                 <div class="form-group">
                                     <label class="sr-only" for="exampleInputEmail2">enter title</label>
                                     <input type="text" class="form-control" id="exampleInputEmail2" placeholder="Enter Title" name="title">
                                 </div>
-                                <button type="submit" style="border-radius: 50%;" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-plus"></span></button>
-
+                                <div class="form-group">
+                                    <button type="submit" style="border-radius: 50%;" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-plus"></span></button>
+                                </div>
                             </form>
 
 
                         </div>
                         <div class="panel-body">
-                            <ul class="list-group">
-                                <li class="list-group-item">Cras justo odio</li>
-                                <li class="list-group-item">Dapibus ac facilisis in</li>
-                                <li class="list-group-item">Morbi leo risus</li>
-                                <li class="list-group-item">Porta ac consectetur ac</li>
-                                <li class="list-group-item">Vestibulum at eros</li>
+                            <script id="note-titles-template" type="text/html">
+                                {{#data}}
+                                <li class="list-group-item" data-id="{{id}}">
+                                    {{title}}
+                                    <button onclick="note_delete(this);" class="close" data-dismiss="alert"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                                </li>
+                                {{/data}}
+                            </script>
+                            <ul class="list-group" id="note-titles">
                             </ul>
                         </div>
                     </div>
@@ -129,7 +134,7 @@
             </div>
         </div>
 
-        <div class="col-md-10">
+        <div class="col-md-9">
             start work !
         </div>
     </div>
@@ -137,5 +142,48 @@
 
 <script src="//cdn.endaosi.com/library/jquery-3.1.0/dist/jquery.min.js"></script>
 <script src="//cdn.endaosi.com/library/bootstrap-3.3.5/dist/js/bootstrap.min.js"></script>
+<script src="/jquery.mustache.js"></script>
+<script src="/mustache-0.7.2.js"></script>
+
+<script>
+
+    function note_delete(el) {
+        var $el = $(el).parent();
+        $.ajax({
+            type: 'POST',
+            url: '/note/' + $el.attr('data-id'),
+            data: {
+                '_method': 'delete'
+            },
+            dataType: "json",
+            success: function(result){
+                $el.remove();
+            }
+        });
+
+    }
+    $(function () {
+        $.Mustache.addFromDom();
+        $.getJSON('/note', function(result){
+            $('#note-titles').mustache('note-titles-template', result, { method: 'append' });
+        });
+    });
+
+    $(document).on('submit', '#note-add-form', function (events) {
+        var self = $(events.target);
+        $(this).attr('action');
+        $.ajax({
+            type: self.attr('method'),
+            url: self.attr('action'),
+            data: self.serializeArray(),
+            dataType: "json",
+            success: function(result){
+                $('#note-titles').mustache('note-titles-template', result, { method: 'append' });
+            }
+        });
+        return false;
+    })
+
+</script>
 </body>
 </html>

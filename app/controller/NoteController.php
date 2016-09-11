@@ -20,7 +20,6 @@ class NoteController
     }
     public function store(){
         $response = $this -> success($this -> note -> add($this -> request -> get('title')));
-
         return $response;
     }
     public function index(){
@@ -35,6 +34,10 @@ class NoteController
             'message' => $message,
             'data' => $data,
         ]);
+    }
+    public function destroy($id){
+        $response = $this -> success($this -> note -> delete($id));
+        return $response;
     }
 }
 

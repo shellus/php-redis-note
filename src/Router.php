@@ -129,10 +129,10 @@ class Router
         $this -> get(       '/' . $name . ''                    , $controller . '@' . 'index');
         $this -> get(       '/' . $name . '/create'             , $controller . '@' . 'create');
         $this -> post(      '/' . $name . ''                    , $controller . '@' . 'store');
-        $this -> get(       '/' . $name . '/[a-z0-9_-]+'        , $controller . '@' . 'show');
-        $this -> get(       '/' . $name . '/[a-z0-9_-]+/edit'   , $controller . '@' . 'edit');
-        $this -> put(       '/' . $name . '/[a-z0-9_-]+'        , $controller . '@' . 'update');
-        $this -> delete(    '/' . $name . '/[a-z0-9_-]+'        , $controller . '@' . 'destroy');
+        $this -> get(       '/' . $name . '/([^/]+)'        , $controller . '@' . 'show');
+        $this -> get(       '/' . $name . '/([^/]+)/edit'   , $controller . '@' . 'edit');
+        $this -> put(       '/' . $name . '/([^/]+)'        , $controller . '@' . 'update');
+        $this -> delete(    '/' . $name . '/([^/]+)'        , $controller . '@' . 'destroy');
     }
     /**
      * Execute the router: Loop all defined before middleware's and routes, and execute the handling function if a match was found
@@ -144,7 +144,6 @@ class Router
     {
         // Define which method we need to handle
         $this->requestedMethod = $this->getRequestMethod();
-
         if (isset($this->afterRoutes[$this->requestedMethod])) {
             $response = $this->handle($this->afterRoutes[$this->requestedMethod]);
         }
@@ -252,6 +251,8 @@ class Router
             $headers = $this->getRequestHeaders();
             if (isset($headers['X-HTTP-Method-Override']) && in_array($headers['X-HTTP-Method-Override'], array('PUT', 'DELETE', 'PATCH'))) {
                 $method = $headers['X-HTTP-Method-Override'];
+            }elseif (array_key_exists('_method', $_POST)){
+                $method = strtoupper($_POST['_method']);
             }
         }
         return $method;

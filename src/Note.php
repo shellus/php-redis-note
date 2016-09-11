@@ -38,8 +38,8 @@ class Note {
      */
     public function add($title = ""){
         $id = $this -> get_new_id();
-        $this -> redis -> hSet($this::note_titles_key, $id ,$title);
-        return $id;
+        $this -> redis -> hSet($this::note_titles_key, $id , $title);
+        return ['id' => $id, 'title' => $title, 'payload' => ''];
     }
     public function index($strat = 0, $offset = -1){
         $ids = $this -> redis -> zRange($this::note_ids_key, $strat, $offset);
@@ -58,7 +58,7 @@ class Note {
         return $notes;
     }
     public function delete($id){
-
+        // todo
     }
     public function change($id, $payload){
         $this -> redis -> hSet($this::note_payloads_key, $id ,$payload);

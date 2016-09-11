@@ -16,6 +16,15 @@ function app($class_name)
     return $container -> get($class_name);
 }
 
+/**
+ * @param $view
+ * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
+ */
+function view($view){
+    $response = BinaryFileResponse::create(APP_PATH . "/app/view/{$view}.html");
+    return $response;
+}
+
 $router = new Router();
 
 require_once '../app/routes.php';
