@@ -1,6 +1,8 @@
 # php-redis-note
 使用php编写的笔记应用，只使用redis储存数据
 
+### 数据结构图
+<img src="https://raw.githubusercontent.com/shellus/php-redis-note/master/data.jpg" width = "400" />
 
 ### TODO
 
