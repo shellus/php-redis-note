@@ -19,6 +19,6 @@
     },
     "require": {
         "symfony/http-foundation": "^3.1",
-        "league/container": "*"
+        "league/container": "^3.2"
     }
 }
